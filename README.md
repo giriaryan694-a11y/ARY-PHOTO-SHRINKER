@@ -3,7 +3,7 @@ ARY-PHOTO-SHRINKER is a lightweight, responsive web tool that compresses and res
 
 Quick demo : https://giriaryan694-a11y.github.io/ARY-PHOTO-SHRINKER/
 
-##Features
+## Features
 
 Drag & drop or file picker image upload.
 
@@ -21,7 +21,7 @@ Responsive design: works perfectly on desktop and Android devices.
 
 Black background with green text for a sleek, hacker-style interface.
 
-##Usage
+## Usage
 
 Open the HTML file in any modern browser.
 
