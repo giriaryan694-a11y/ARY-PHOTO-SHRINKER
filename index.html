@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARY-PHOTO-SHRINKER</title>
+<style>
+  body {
+    background-color: black;
+    color: lime;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    margin: 0;
+  }
+  h1 {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    margin-bottom: 1rem;
+  }
+  input, select, button {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background-color: black;
+    color: lime;
+    border: 1px solid lime;
+    font-family: monospace;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: lime;
+    color: black;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+  }
+  canvas {
+    margin: 1rem 0;
+    max-width: 100%;
+  }
+  footer {
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+<h1>ARY-PHOTO-SHRINKER</h1>
+<div class="container">
+  <input type="file" id="imageInput" accept="image/*">
+  <label>Width: <input type="number" id="widthInput"></label>
+  <label>Height: <input type="number" id="heightInput"></label>
+  <label>Format: 
+    <select id="formatSelect">
+      <option value="jpeg">JPEG</option>
+      <option value="png">PNG</option>
+      <option value="webp">WebP</option>
+    </select>
+  </label>
+  <label>Quality (JPEG/WebP only): <input type="range" id="qualityInput" min="1" max="100" value="80"></label>
+  <button id="processBtn">Process & Download</button>
+  <canvas id="canvas"></canvas>
+  <p id="info"></p>
+</div>
+<footer>Made by Aryan Giri</footer>
+<script>
+const imageInput = document.getElementById('imageInput');
+const widthInput = document.getElementById('widthInput');
+const heightInput = document.getElementById('heightInput');
+const formatSelect = document.getElementById('formatSelect');
+const qualityInput = document.getElementById('qualityInput');
+const processBtn = document.getElementById('processBtn');
+const canvas = document.getElementById('canvas');
+const info = document.getElementById('info');
+const ctx = canvas.getContext('2d');
+
+let img = new Image();
+
+imageInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { img.src = reader.result; };
+  reader.readAsDataURL(file);
+});
+
+img.onload = () => {
+  widthInput.value = img.width;
+  heightInput.value = img.height;
+  drawCanvas(img.width, img.height);
+};
+
+function drawCanvas(w, h) {
+  canvas.width = w;
+  canvas.height = h;
+  ctx.drawImage(img, 0, 0, w, h);
+  updateInfo();
+}
+
+function updateInfo() {
+  canvas.toBlob(blob => {
+    info.textContent = `Current size: ${(blob.size/1024).toFixed(2)} KB`;
+  }, formatSelect.value, qualityInput.value/100);
+}
+
+processBtn.addEventListener('click', () => {
+  const w = parseInt(widthInput.value);
+  const h = parseInt(heightInput.value);
+  drawCanvas(w, h);
+  canvas.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `resized.${formatSelect.value}`;
+    a.click();
+    updateInfo();
+  }, formatSelect.value, qualityInput.value/100);
+});
+</script>
+</body>
+</html>
